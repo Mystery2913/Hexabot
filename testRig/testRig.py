@@ -1,3 +1,4 @@
+import math
 import time
 from board import SCL, SDA
 import busio
@@ -17,28 +18,37 @@ pca = PCA9685(i2c)
 # pca = PCA9685(i2c, reference_clock_speed=25630710)
 pca.frequency = 50
 
-# To get the full range of the servo you will likely need to adjust the min_pulse and max_pulse to
-# match the stall points of the servo.
-# This is an example for the Sub-micro servo: https://www.adafruit.com/product/2201
-# servo7 = servo.Servo(pca.channels[7], min_pulse=580, max_pulse=2350)
-# This is an example for the Micro Servo - High Powered, High Torque Metal Gear:
-#   https://www.adafruit.com/product/2307
-# servo7 = servo.Servo(pca.channels[7], min_pulse=500, max_pulse=2600)
-# This is an example for the Standard servo - TowerPro SG-5010 - 5010:
-#   https://www.adafruit.com/product/155
-# servo7 = servo.Servo(pca.channels[7], min_pulse=400, max_pulse=2400)
-# This is an example for the Analog Feedback Servo: https://www.adafruit.com/product/1404
-# servo7 = servo.Servo(pca.channels[7], min_pulse=600, max_pulse=2500)
-# This is an example for the Micro servo - TowerPro SG-92R: https://www.adafruit.com/product/169
-# servo7 = servo.Servo(pca.channels[7], min_pulse=500, max_pulse=2400)
-
-# The pulse range is 750 - 2250 by default. This range typically gives 135 degrees of
-# range, but the default is to use 180 degrees. You can specify the expected range if you wish:
-# # servo7 = servo.Servo(pca.channels[7], actuation_range=135)
 servo0 = servo.Servo(pca.channels[0], min_pulse=650, max_pulse=2800)
 servo1 = servo.Servo(pca.channels[1], min_pulse=650, max_pulse=2800)
 servo2 = servo.Servo(pca.channels[2], min_pulse=650, max_pulse=2800)
 
-servo0.angle = 160
-servo1.angle = 105
+servo0.angle = 70
+servo1.angle = 130
 servo2.angle = 82
+
+arm1AngleC = 43
+arm2AngleC = 150
+arm1PointX = -117.017
+arm1PointY = 57.939
+arm1Length = 140
+arm2Length = 90
+
+targetX = 0
+targetY = 0
+
+ac = math.sqrt((targetX-arm1PointX)**2+(targetY-arm1PointY)**2)
+B = math.acos((ac**2-arm2Length**2-arm1Length**2)/(-2*arm2Length*arm1Length))
+O = math.atan(abs(arm1PointY)/abs(arm1PointX))
+A = math.asin(arm1Length*math.sin(B)/(ac))
+
+B = math.degrees(B)
+O = math.degrees(O)
+A = math.degrees(A)
+
+
+a = A-O
+servo0angle = arm1AngleC + (180 - B)
+servo1angle = arm2AngleC - a
+
+servo0.angle = servo0angle
+servo1.angle = servo1angle

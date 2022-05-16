@@ -1,14 +1,12 @@
 import math
 import time
-#from board import SCL, SDA
-#import busio
+from board import SCL, SDA
+import busio
 
 # Import the PCA9685 module. Available in the bundle and here:
 #   https://github.com/adafruit/Adafruit_CircuitPython_PCA9685
 from adafruit_motor import servo
 from adafruit_pca9685 import PCA9685
-
-"""
 
 i2c = busio.I2C(SCL, SDA)
 
@@ -27,8 +25,6 @@ servo2 = servo.Servo(pca.channels[2], min_pulse=650, max_pulse=2800)
 servo0.angle = 70
 servo1.angle = 130
 servo2.angle = 82
-
-"""
 
 arm1AngleC = 43
 arm2AngleC = 150
@@ -56,5 +52,5 @@ a = A-O
 servo0angle = arm1AngleC + (180 - B)
 servo1angle = arm2AngleC - a
 
-#servo0.angle = servo0angle
-#servo1.angle = servo1angle
+servo0.angle = servo0angle
+servo1.angle = servo1angle

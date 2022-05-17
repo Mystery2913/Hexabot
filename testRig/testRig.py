@@ -33,24 +33,30 @@ arm1PointY = 57.939
 arm1Length = 140
 arm2Length = 90
 
-targetX = 20
-targetY = -30
+def moveToCartesian(targetX, targetY):
 
-acx = (arm1PointX-targetX)
-acy = (arm1PointY-targetY)
-ac = math.sqrt(acx**2+acy**2)
-B = math.acos((ac**2-arm2Length**2-arm1Length**2)/(-2*arm2Length*arm1Length))
-O = math.atan(abs(acy)/abs(acx))
-A = math.asin(arm1Length*math.sin(B)/(ac))
+    acx = (arm1PointX-targetX)
+    acy = (arm1PointY-targetY)
+    ac = math.sqrt(acx**2+acy**2)
+    B = math.acos((ac**2-arm2Length**2-arm1Length**2)/(-2*arm2Length*arm1Length))
+    O = math.atan(abs(acy)/abs(acx))
+    A = math.asin(arm1Length*math.sin(B)/(ac))
 
-B = math.degrees(B)
-O = math.degrees(O)
-A = math.degrees(A)
+    B = math.degrees(B)
+    O = math.degrees(O)
+    A = math.degrees(A)
 
 
-a = A-O
-servo0angle = arm1AngleC + (180 - B)
-servo1angle = arm2AngleC - a
+    a = A-O
+    servo0angle = arm1AngleC + (180 - B)
+    servo1angle = arm2AngleC - a
 
-servo0.angle = servo0angle
-servo1.angle = servo1angle
+    servo0.angle = servo0angle
+    servo1.angle = servo1angle
+
+def circle(x):
+    return x**2/72
+
+for i in range(0, 70, 5):
+    moveToCartesian(i, circle(i))
+    time.sleep(0.5)

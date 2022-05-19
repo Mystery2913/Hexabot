@@ -28,35 +28,42 @@ servo2.angle = 82
 
 arm1AngleC = 43
 arm2AngleC = 150
-arm1PointX = -117.017
-arm1PointY = 57.939
+arm2PointY = 57.939
+arm3PointX = -215.517
+arm3PointZ = 0
+arm2To3X = 98.50
 arm1Length = 140
 arm2Length = 90
 
-def moveToCartesian(targetX, targetY):
+def moveToCartesian(targetX, targetY, targetZ):
 
-    acx = (arm1PointX-targetX)
-    acy = (arm1PointY-targetY)
-    ac = math.sqrt(acx**2+acy**2)
+    Zangle = math.atan(targetZ/(abs(arm3PointX)+targetX))
+
+    arm2Offset = arm2To3X*math.cos(Zangle)
+    arm2PointX = arm3PointX + arm2Offset
+    totalArm3Length = math.sqrt((abs(arm3PointX)+targetX)**2+targetZ**2)
+    arm2Length = totalArm3Length - arm2Offset
+    Zangle = math.degrees(Zangle)
+
+
+    acx = (arm2PointX-targetX)
+    acy = (arm2PointY-targetY)
+    ac = arm2Length
     B = math.acos((ac**2-arm2Length**2-arm1Length**2)/(-2*arm2Length*arm1Length))
-    O = math.atan(abs(acy)/abs(acx))
+    O = math.asin(abs(acy)/ac)
     A = math.asin(arm1Length*math.sin(B)/(ac))
 
     B = math.degrees(B)
     O = math.degrees(O)
     A = math.degrees(A)
 
-
     a = A-O
     servo0angle = arm1AngleC + (180 - B)
     servo1angle = arm2AngleC - a
+    servo2angle = 82 - Zangle
 
     servo0.angle = servo0angle
     servo1.angle = servo1angle
+    servo2.angle = servo2angle
 
-def circle(x):
-    return x**2/72
-
-for i in range(0, 70, 5):
-    moveToCartesian(i, circle(i))
-    time.sleep(0.5)
+moveToCartesian(0, 20, 0)

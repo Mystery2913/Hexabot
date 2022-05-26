@@ -45,7 +45,7 @@ def moveToCartesian(targetX, targetY, targetZ):
 
 
     acy = (arm2PointY-targetY)
-    ac = math.sqrt(underAC**2+(abs(acy)))
+    ac = math.sqrt(underAC**2+acy**2)
     B = math.acos((ac**2-arm2Length**2-arm1Length**2)/(-2*arm2Length*arm1Length))
     O = math.atan(abs(acy)/underAC)
     A = math.asin(arm1Length*math.sin(B)/(ac))

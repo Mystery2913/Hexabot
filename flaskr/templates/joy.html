@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<!--
+ The MIT License (MIT)
+
+ This file is part of the JoyStick Project (https://github.com/bobboteck/JoyStick).
+ Copyright (c) 2015 Roberto D'Amico (Bobboteck).
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ 
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+-->
+<html>
+	<head>
+		<title>Joy</title>
+		<meta charset="utf-8">
+		<meta name="description" content="Example page of use pure Javascript JoyStick">
+		<meta name="author" content="Roberto D'Amico">
+		<link rel="shortcut icon" type="image/png" href="http://bobboteck.github.io/img/roberto-damico-bobboteck.png">
+		<style>
+*
+{
+	box-sizing: border-box;
+}
+body
+{
+	margin: 0px;
+	padding: 0px;
+	font-family: monospace;
+	background-color: #1b1b1d;
+}
+.row
+{
+	display: inline-flex;
+	clear: both;
+	margin:0 auto;
+}
+.columnLateral
+{
+  float: left;
+  width: 15%;
+  min-width: 300px;
+}
+.columnCetral
+{
+  float: left;
+  width: 70%;
+  min-width: 300px;
+}
+#joy2Div
+{
+	width:200px;
+	height:200px;
+	margin:50px
+}
+
+
+		</style>
+		<script src="{{url_for('static',filename='js/joy.js')}}"></script>
+		<script src="{{url_for('static',filename='js/script.js')}}" defer></script>
+	</head>
+	<body>
+		<!-- Example of two JoyStick integrated in the page structure -->
+		<div class="row">
+			<div class="columnLateral">
+				<div id="joy1Div" style="width:200px;height:200px;margin:50px"></div>
+				Posizione X:<input id="joy1PosizioneX" type="text" /><br />
+				Posizione Y:<input id="joy1PosizioneY" type="text" /><br />
+				Direzione:<input id="joy1Direzione" type="text" /><br />
+				X :<input id="joy1X" type="text" /></br>
+				Y :<input id="joy1Y" type="text" value="0" />
+			</div>	
+		</div>
+		<script type="text/javascript">
+// Create JoyStick object into the DIV 'joy1Div'
+//var Joy1 = new JoyStick('joy1Div');
+
+var joy1IinputPosX = document.getElementById("joy1PosizioneX");
+var joy1InputPosY = document.getElementById("joy1PosizioneY");
+var joy1Direzione = document.getElementById("joy1Direzione");
+var joy1X = document.getElementById("joy1X");
+var joy1Y = document.getElementById("joy1Y");
+
+
+
+
+// Create JoyStick object into the DIV 'joy1Div'
+
+var joy1Param = {"internalFillColor" : "#4da12b", "internalLineWidth" : "#328511"}
+
+var Joy1 = new JoyStick('joy1Div', joy1Param, function(stickData) {
+    joy1IinputPosX.value = stickData.xPosition;
+    joy1InputPosY.value = stickData.yPosition;
+    joy1Direzione.value = stickData.cardinalDirection;
+    joy1X.value = stickData.x;
+    joy1Y.value = stickData.y;
+});
+
+setInterval(function(){ post(joy1Y.value)}, 1000);
+
+		</script>
+	</body>
+</html>

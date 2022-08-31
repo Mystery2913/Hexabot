@@ -10,6 +10,8 @@ queue = firmware.stackExecute()
 process = mp.Process(target=queue.queue, args=(walking,speed))
 process.start()
 
+robot = firmware.Hexabot()
+
 app = Flask(__name__)
 
 @app.route('/', methods=["GET", "POST"])
@@ -21,13 +23,20 @@ def data():
     if request.method == "POST":
         jsonData = request.get_json()
         print(jsonData)
-        y = int(jsonData['y'])
-        if y > 0:
-            speed.value = y / 100
-            walking.value = True
-        return {
-            'response' : 'I am the response'
-        }
+        if jsonData["type"] == "walk":
+            y = int(jsonData['y'])
+            if y > 0:
+                speed.value = y / 100
+                walking.value = True
+            return {
+                'response' : 'I am the response'
+            }
+        elif jsonData["type"] == "stand":
+            for leg in robot.legs:
+                leg.moveLeg(-80,-120, 0, 0.5)
+            return {
+                'response' : 'I am the response'
+            }
     return render_template('dataButton.html')
 
 @app.route('/joy')

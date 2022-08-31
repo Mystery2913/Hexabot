@@ -82,6 +82,7 @@ body
 				Direzione:<input id="joy1Direzione" type="text" /><br />
 				X :<input id="joy1X" type="text" /></br>
 				Y :<input id="joy1Y" type="text" value="0" />
+				<button id="standButton">Reset leg postions </button>
 			</div>	
 		</div>
 		<script type="text/javascript">
@@ -109,7 +110,10 @@ var Joy1 = new JoyStick('joy1Div', joy1Param, function(stickData) {
     joy1Y.value = stickData.y;
 });
 
-setInterval(function(){ post(joy1Y.value)}, 1000);
+setInterval(function(){ post('walk', joy1Y.value)}, 1000);
+
+var standButton = document.getElementById("standButton")
+standButton.addEventListener("click", function() { post("stand", 0)})
 
 		</script>
 	</body>

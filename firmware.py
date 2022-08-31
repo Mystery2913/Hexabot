@@ -180,7 +180,7 @@ class stackExecute():
     def queue(self, var, speed):
         while True:
             if var.value == True:
-                robot.walkForward(0.8)
+                robot.walkForward(speed.value)
                 print('lopp')
                 var.value = False
     

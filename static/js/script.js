@@ -1,5 +1,5 @@
 
-function post(y) {
+function post(type, y) {
 
     fetch('/data', {
         headers : {
@@ -7,6 +7,7 @@ function post(y) {
         },
         method : 'POST',
         body : JSON.stringify( {
+            'type' : type,
             'y' : y
         })
     })

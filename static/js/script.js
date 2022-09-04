@@ -16,18 +16,21 @@ with this program. If not, see <https://www.gnu.org/licenses/>.
 
 function post(type, y) {
 
-    fetch('/data', {
+    // Creates POST request and formats data into JSON for HTTP data transfer.
+    fetch('/joy', {
         headers : {
             'Content-Type' : 'application/json'
         },
         method : 'POST',
         body : JSON.stringify( {
+            // Formats data.
             'type' : type,
             'y' : y
         })
     })
     .then(function (response){
 
+        // Sends HTTP OK response with data if request is successful.
         if(response.ok) {
             response.json()
             .then(function(response) {
@@ -37,7 +40,7 @@ function post(type, y) {
         else {
             throw Error('Something went wrong');
         }
-    })
+    }) // Catches other errors and returns HTTP response code.
     .catch(function(error) {
         console.log(error);
     });

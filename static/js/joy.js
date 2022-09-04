@@ -45,6 +45,11 @@
  * SOFTWARE.
  */
 
+/*
+This code has been taken from Roberto D'Amico (Bobboteck) from github repo <https://github.com/bobboteck/JoyStick>
+*/
+
+
 let StickStatus =
 {
     xPosition: 0,

@@ -37,7 +37,7 @@ def index():
     return render_template("index.html")
 
 # Post request for passing data to the backend.
-@app.route('/data', methods=["GET", "POST"])
+@app.route('/joy', methods=["GET", "POST"])
 def data():
     if request.method == "POST":
         # Unpack data
@@ -60,8 +60,4 @@ def data():
             return {
                 'response' : 'I am the response'
             }
-    return render_template('dataButton.html')
-
-@app.route('/joy')
-def joy():
-    return render_template("joy.html")
+    return render_template('joy.html')

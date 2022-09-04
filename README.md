@@ -29,3 +29,16 @@ Clone repository:
 ```
 git clone https://github.com/Mystery2913/Hexabot.git
 ```
+Navigate into repo:
+```
+cd Hexabot
+```
+Install dependencies:
+```
+pip install -r requirements.txt
+```
+Startup Control site
+```
+flask run --no-debugger --host=0.0.0.0
+```
+Use addresses printed in console to connect to website, and add /joy to address to access control panel.

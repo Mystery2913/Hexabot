@@ -21,11 +21,12 @@ import ctypes
 
 # Initialise the walking and speed shared memory variables and the stackExecute class.
 walking = mp.Value(ctypes.c_bool, False)
+walkingSlow = mp.Value(ctypes.c_bool, False)
 speed = mp.Value(ctypes.c_float, 0)
 queue = firmware.stackExecute()
 
 # Initialise the process with the queue method and pass it `walking` and `speed` arguments, then start the process.
-process = mp.Process(target=queue.queue, args=(walking,speed))
+process = mp.Process(target=queue.queue, args=(walkingSlow, walking, speed))
 process.start()
 
 robot = firmware.Hexabot()
@@ -43,13 +44,23 @@ def data():
         # Unpack data
         jsonData = request.get_json()
         print(jsonData)
-        # If the data type is walk, then set the walking value to True. This will cause the queue process on call Hexabot.walkForward().
-        if jsonData["type"] == "walk":
+        # If the data type is normal, then set the walking value to True. This will cause the queue process on call Hexabot.walkForward().
+        if jsonData["type"] == "Normal":
             y = int(jsonData['y'])
             if y > 0:
                 # Scale the y value of the joystick to the speed passed to stackExecute.queue() and then to Hexabot.walkForward().
                 speed.value = y / 100
                 walking.value = True
+            return {
+                'response' : 'I am the response'
+            }
+        # If the data type is Slow, then set the walkingSlow value to True. This will cause the queue process on call Hexabot.walkForwardSlow().
+        elif jsonData["type"] == "Slow":
+            y = int(jsonData['y'])
+            if y > 0:
+                # Scale the y value of the joystick to the speed passed to stackExecute.queue() and then to Hexabot.walkForward().
+                speed.value = y / 100
+                walkingSlow.value = True
             return {
                 'response' : 'I am the response'
             }

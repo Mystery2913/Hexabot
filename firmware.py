@@ -64,7 +64,10 @@ class Hexabot:
         self.leg4 = Leg(4, self.pcaSet, self.updateRate)
         self.leg5 = Leg(5, self.pcaSet, self.updateRate)
         self.legs = [self.leg0, self.leg1, self.leg2, self.leg3, self.leg4, self.leg5]
-    
+        # slowWalkingIndexList defines the sequence of the walkForwardSlow() method, and slowWalkingIndexNum stores the leg to be moved.
+        self.slowWalkingIndexList = [2, 3, 1, 4, 0, 5]
+        self.slowWalkingIndexNum = 0
+
     def walkForward(self, speed: float) -> None:
         """
         Moves Hexabot forward by 1 step of 3 steps in cycle.
@@ -83,11 +86,11 @@ class Hexabot:
         forwardDownCoord = [-80, -120, 15]
         backDownCoord = [-80, -120, -15]
         coords = [forwardUpCoord, forwardDownCoord, backDownCoord]
-        # shortestDuration specifies the duration of the fastest move and longestDuration specifies the duration of the slowest move. Values are in seconds.
-        shortestDuration = 0.5
-        longestDuration = 3
+        # shortestDurationStep specifies the duration of the fastest move and longestDurationStep specifies the duration of the slowest move. Values are in seconds.
+        shortestDurationStep = 0.5
+        longestDurationStep = 3
         # The `speed` argument is a percentage between 0 and 1, and then is scaled to the shortest and longest duration. E.g. if `speed` was 1, the stepDuration would be 0.5.
-        stepDuration = longestDuration + (((speed-0)*(shortestDuration-longestDuration))/(1-0))
+        stepDuration = longestDurationStep + (((speed-0)*(shortestDurationStep-longestDurationStep))/(1-0))
 
         for leg in self.legs:
             # Assign each legs current x and y coords to its own x and y attribute. The position in the sequence of each leg is determined by its walking index.
@@ -110,6 +113,62 @@ class Hexabot:
         # After one step shift each legs.
         for leg in self.legs:
             leg.shiftWalkingIndex()
+    
+
+    def walkForwardSlow(self, speed: float) -> None:
+        """
+        Moves Hexabot forward by 1 step of 3 steps in cycle.
+        
+        Cycles 1 leg at a time through 3 coordinate states over a period of time defined by `speed`.
+        Each execution acts as one step, and the current leg this is next leg to move is stored in Hexabot. 
+
+        Args:
+            `speed` (float): Defines the speed of the step, is a percentage between 0 - 1.
+        
+        Returns:
+            None
+        """
+        # Each set of coordinates corresponds to the positions of 3 points in the walking sequence. Index 2 of these lists are angles not Z coords.
+        forwardUpCoord = [-20, 10, 15]
+        forwardDownCoord = [-80, -120, 15]
+        backDownCoord = [-80, -120, -15]
+        coords = [forwardUpCoord, forwardDownCoord, backDownCoord]
+        # shortestDurationStep specifies the duration of the fastest move and longestDurationStep specifies the duration of the slowest move. Values are in seconds.
+        shortestDurationStep = 0.5
+        longestDurationStep = 3
+        # shortestDurationStep specifies the duration of the fastest pause and longestDurationStep specifies the duration of the slowest pause. Values are in seconds.
+        shortestDurationPause = 0.5
+        longestDurationPause = 1.5
+        
+        # The `speed` argument is a percentage between 0 and 1, and then is scaled to the shortest and longest duration. E.g. if `speed` was 1, the stepDuration would be 0.5.
+        stepDuration = longestDurationStep + (((speed-0)*(shortestDurationStep-longestDurationStep))/(1-0))
+        pauseDuration = (longestDurationPause) + (((speed-0)*((shortestDurationPause)-(longestDurationPause)))/(1-0))
+
+        for i in range(3):
+            # Find leg depending on the current slowWalkingIndexNum
+            leg = self.legs[self.slowWalkingIndexList[self.slowWalkingIndexNum]]
+
+            # Assign the leg is x, y, and z angle to its object.
+            leg.x = coords[i][0]
+            leg.y = coords[i][1]
+            # The legs that are on the left side of Hexabot (leg index 0-2) need to have their zAngle inverted, since all legs need to be moving in the same direction.
+            if math.floor(leg.index/3) == 0:
+                leg.zAngle = (coords[i][2]) * -1
+            else:
+                leg.zAngle = (coords[i][2])
+            # Each legs increment arrays are generated using the assigned coords 
+            leg.incrementArray = leg.processLegCoord(leg.x, leg.y, zAngle = leg.zAngle, duration=stepDuration)
+            
+            # The number of frames in the interpolation sequence is determined by stepDuration / self.updateRate.
+            for i in range(int(stepDuration / self.updateRate)):
+                # For each interpolation sequence frame move each leg on step along in its sequence. This means that the legs move simultaneously.
+                leg.moveFrame(leg.incrementArray)
+            time.sleep(pauseDuration)
+        
+        # Increment the sequence list
+        self.slowWalkingIndexNum += 1
+        if self.slowWalkingIndexNum > 5:
+            self.slowWalkingIndexNum = 0
 
 
     def disableMotors(self) -> None:
@@ -380,7 +439,7 @@ class stackExecute():
         self.robot = Hexabot()
 
 
-    def queue(self, walkingState: object, speed: object) -> None:
+    def queue(self, walkingStateSlow: object, walkingState: object, speed: object) -> None:
         """
         Checks if the state of walking is True, then executes `Hexabot.walkForward()`.
 
@@ -394,10 +453,13 @@ class stackExecute():
             None
         """
         while True:
-            # Check weather or not the value of `walkingState` has been updated. If so, call the Hexabot.walkForward() method and pass it the speed value from `speed`.
+            # Check weather or not the value of `walkingState` or `walkingStateSlow` has been updated. If so, call the Hexabot.walkForward() or the Hexabot.walkForwardSlow() methods and pass it the speed value from `speed`.
             if walkingState.value == True:
                 robot.walkForward(speed.value)
                 walkingState.value = False
+            if walkingStateSlow.value == True:
+                robot.walkForwardSlow(speed.value)
+                walkingStateSlow.value = False
 
 
 robot = Hexabot()

@@ -39,6 +39,9 @@ class Hexabot:
     -------
     `walkForward`(speed) -> None
         Moves Hexabot forward by 1 step of 3 steps in cycle
+
+    `walkForwardSlow`(speed) -> None
+        Moves Hexabot forward by 1 step of 6 steps in cycle
     
     `disableMotors`() -> None
         Disables all motors, will only stop motors from holding position if power is cycled
@@ -117,7 +120,7 @@ class Hexabot:
 
     def walkForwardSlow(self, speed: float) -> None:
         """
-        Moves Hexabot forward by 1 step of 3 steps in cycle.
+        Moves Hexabot forward by 1 step of 6 steps in cycle.
         
         Cycles 1 leg at a time through 3 coordinate states over a period of time defined by `speed`.
         Each execution acts as one step, and the current leg this is next leg to move is stored in Hexabot. 
